@@ -32,6 +32,11 @@ The system splits the incoming raw camera feed into two distinct simultaneous ou
 
 ---
 
+## JPG output
+
+* see raw public link
+```https://raw.githubusercontent.com/sting-fancy/webcam/main/live.jpg```
+
 ## 3. Directory Inventory
 
 * `systemd/youtube-stream.service` — Core dual-output hardware acceleration pipeline.
