@@ -1,0 +1,49 @@
+[Unit]
+Description=YouTube 24/7 Mountain Stream
+After=network.target
+StartLimitIntervalSec=60s
+StartLimitBurst=5
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=40s
+EnvironmentFile=/etc/systemd/system/youtube-stream.env
+
+ExecStart=/usr/bin/ffmpeg \
+  -hwaccel vaapi \
+  -hwaccel_device /dev/dri/renderD128 \
+  -hwaccel_output_format vaapi \
+  -rtsp_transport tcp \
+  -stimeout 10000000 \
+  -i "rtsp://user:${YOUTUBE_USER_PASS}@192.168.3.15:554/CAM01Z/CAM01" \
+  -map 0:v:0 -map 0:a:0 \
+  -vf "scale_vaapi=1920:1080:format=nv12" \
+  -c:v h264_vaapi \
+  -b:v 6000k \
+  -maxrate 6000k \
+  -bufsize 12000k \
+  -g 40 \
+  -keyint_min 40 \
+  -bf 0 \
+  -vsync 0 \
+  -af "volume=0.0" \
+  -c:a aac \
+  -ar 44100 \
+  -b:a 128k \
+  -ac 2 \
+  -f flv \
+  -flvflags no_sequence_end \
+  "rtmp://a.rtmp.youtube.com/live2/${YOUTUBE_STREAM_KEY}" \
+  -map 0:v:0 \
+  -vf "hwdownload,format=nv12,fps=1/60" \
+  -an \
+  -update 1 \
+  -y /home/frans/.local/tmp/webcam_live.jpg
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=youtube-stream
+
+[Install]
+WantedBy=multi-user.target
