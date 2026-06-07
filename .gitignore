@@ -1,4 +1,2 @@
 *.env
-youtube-stream.env
-*.txt
-*.log
+*.env.example

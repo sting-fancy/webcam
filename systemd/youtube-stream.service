@@ -1,5 +1,5 @@
 [Unit]
-Description=YouTube 24/7 Mountain Stream
+Description=YouTube 24/7 Webcam Stream
 After=network.target
 StartLimitIntervalSec=60s
 StartLimitBurst=5
@@ -8,7 +8,8 @@ StartLimitBurst=5
 Type=simple
 Restart=on-failure
 RestartSec=40s
-EnvironmentFile=/etc/systemd/system/youtube-stream.env
+# Points to the secret environment file
+EnvironmentFile=/home/frans/webcam/youtube-stream.env
 
 ExecStart=/usr/bin/ffmpeg \
   -hwaccel vaapi \
@@ -16,25 +17,25 @@ ExecStart=/usr/bin/ffmpeg \
   -hwaccel_output_format vaapi \
   -rtsp_transport tcp \
   -stimeout 10000000 \
-  -i "rtsp://user:${YOUTUBE_USER_PASS}@192.168.3.15:554/CAM01Z/CAM01" \
+  -i "rtsp://${WEBCAM_USER}:${WEBCAM_USER_PASS}@${WEBCAM_IP}:554/CAM01Z/CAM01" \
   -map 0:v:0 -map 0:a:0 \
+  -af "volume=0.1" \
   -vf "scale_vaapi=1920:1080:format=nv12" \
   -c:v h264_vaapi \
-  -b:v 6000k \
-  -maxrate 6000k \
-  -bufsize 12000k \
+  -b:v 13500k \
+  -maxrate 13500k \
+  -bufsize 27000k \
   -g 40 \
   -keyint_min 40 \
   -bf 0 \
   -vsync 0 \
-  -af "volume=0.0" \
   -c:a aac \
-  -ar 44100 \
-  -b:a 128k \
-  -ac 2 \
+  -ar 22050 \
+  -b:a 16k \
+  -ac 1 \
   -f flv \
   -flvflags no_sequence_end \
-  "rtmp://a.rtmp.youtube.com/live2/${YOUTUBE_STREAM_KEY}" \
+  "rtmp://a.rtmp.youtube.com/live2/${YOUTUBE_RTMP_STREAM_KEY}" \
   -map 0:v:0 \
   -vf "hwdownload,format=nv12,fps=1/60" \
   -an \
