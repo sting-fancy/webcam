@@ -37,3 +37,18 @@ The system splits the incoming raw camera feed into two distinct simultaneous ou
 * `systemd/youtube-stream.service` — Core dual-output hardware acceleration pipeline.
 * `upload_webcam.sh` — Automation script executed by cron every 5 minutes.
 * `youtube-stream.env.example` — Template mapping required variables without exposing active secrets.
+
+---
+
+## Notes
+
+* JPG output - see raw public link
+```https://raw.githubusercontent.com/sting-fancy/webcam/main/live.jpg```
+* debug script post service changes
+```
+sudo systemctl stop youtube-stream.service && sudo systemctl reset-failed youtube-stream.service && sudo systemctl daemon-reload && sleep 5 && sudo systemctl start youtube-stream.service && journalctl -u youtube-stream.service -n 30 --no-pager
+```
+
+
+
+
